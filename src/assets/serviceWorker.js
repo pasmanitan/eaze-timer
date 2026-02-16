@@ -1,4 +1,4 @@
-const cacheName = "eaze-timer-v2";
+const cacheName = "eaze-timer-v0.1";
 const precacheResources = [
   "/",
   "/index.html",
@@ -23,21 +23,13 @@ self.addEventListener("activate", () => {
 });
 
 self.addEventListener("fetch", (event) => {
-  if (
-    event.request.method !== "GET" ||
-    !event.request.url.startsWith(self.location.origin)
-  ) {
-    return;
-  }
-
+  console.log("Fetch intercepted for:", event.request.url);
   event.respondWith(
-    caches.open(cacheName).then(async (cache) => {
-      const cachedResponse = await cache.match(event.request);
-      if (cachedResponse) return cachedResponse;
-
-      const networkResponse = await fetch(event.request);
-      cache.put(event.request, networkResponse.clone());
-      return networkResponse;
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request);
     }),
   );
 });
