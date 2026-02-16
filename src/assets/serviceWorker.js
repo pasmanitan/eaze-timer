@@ -1,4 +1,4 @@
-const cacheName = "eaze-timer-v0";
+const cacheName = "eaze-timer-v1";
 const precacheResources = ["/"];
 
 self.addEventListener("install", (event) => {
@@ -13,13 +13,21 @@ self.addEventListener("activate", () => {
 });
 
 self.addEventListener("fetch", (event) => {
-  console.log("Fetch intercepted for:", event.request.url);
+  if (
+    event.request.method !== "GET" ||
+    !event.request.url.startsWith(self.location.origin)
+  ) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request);
+    caches.open(cacheName).then(async (cache) => {
+      const cachedResponse = await cache.match(event.request);
+      if (cachedResponse) return cachedResponse;
+
+      const networkResponse = await fetch(event.request);
+      cache.put(event.request, networkResponse.clone());
+      return networkResponse;
     }),
   );
 });
