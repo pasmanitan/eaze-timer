@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="the greatest timer on the planet" />
+    <title>eaze</title>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", async () => {
+          try {
+            let reg = await navigator.serviceWorker.register(
+              "https://eaze-timer.vercel.app/assets/sw.js",
+            );
+          } catch (err) {}
+        });
+      }
+    </script>
+    <script src="./assets/sw.js"></script>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./assets/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./assets/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./assets/favicon/site.webmanifest" />
+    <audio id="jingle" src="./assets/audio/jingle.wav"></audio>
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <form id="form" style="display: flex; flex-flow: column wrap">
+          <label
+            name="timer"
+            for="timer"
+            id="timer_label"
+            style="text-align: center; color: #8a8a8a; font-family: monospace"
+            onclick="window.open('https://pasmanitan.vercel.app', '_blank')"
+            onmouseover="this.textContent = 'made by paz'"
+            onmouseout="this.textContent = 'eaze timer'"
+            >eaze timer</label
+          >
+          <input
+            name="timer"
+            id="timer"
+            pattern="[0-9:]*"
+            placeholder="00:00:00"
+            maxlength="8"
+            autocomplete="off"
+            dir="rtl"
+          />
+        </form>
+      </div>
+    </main>
+    <script src="./index.js"></script>
+  </body>
+</html>
