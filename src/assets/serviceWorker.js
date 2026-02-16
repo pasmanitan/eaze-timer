@@ -2,12 +2,13 @@ const cacheName = "eaze-timer-v0";
 const precacheResources = [
   "/",
   "/index.html",
+  "/index.js",
+  "/index.css",
   "/assets/favicon/favicon.ico",
-  "/assets/favicon/site.webmanifest",
+  "/assets/site.webmanifest",
   "/assets/audio/jingle.wav",
 ];
 
-// When the service worker is installing, open the cache and add the precache resources to it
 self.addEventListener("install", (event) => {
   console.log("Service worker install event!");
   event.waitUntil(
@@ -19,7 +20,6 @@ self.addEventListener("activate", () => {
   console.log("Service worker activate event!");
 });
 
-// When there's an incoming fetch request, try and respond with a precached resource, otherwise fall back to the network
 self.addEventListener("fetch", (event) => {
   console.log("Fetch intercepted for:", event.request.url);
   event.respondWith(

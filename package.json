@@ -10,7 +10,9 @@
     "typescript": "^5"
   },
   "scripts": {
-    "dist": "bun run ./build.ts",
-    "prev": "bun run ./dist/index.html"
+    "clean": "rm -rf dist && echo 'cleaned!'",
+    "dist": "bun clean && bun build ./src/index.html --minify --outdir ./dist --splitting --target browser && echo 'built prod files!'",
+    "prod": "bun dist && bun run ./dist/index.html",
+    "dev": "bun run ./src/index.html"
   }
 }
