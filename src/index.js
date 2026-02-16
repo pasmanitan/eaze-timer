@@ -3,9 +3,7 @@
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      let reg = await navigator.serviceWorker.register(
-        "/assets/serviceWorker.js",
-      );
+      let reg = await navigator.serviceWorker.register("/serviceWorker.js");
       console.log("Service Worker Registration Success", reg);
     } catch (err) {
       console.log("Service Worker Registration Failure", err);
