@@ -1,13 +1,5 @@
 const cacheName = "eaze-timer-v0";
-const precacheResources = [
-  "/",
-  "/index.html",
-  "/index.js",
-  "/index.css",
-  "/assets/favicon/favicon.ico",
-  "/assets/site.webmanifest",
-  "/assets/audio/jingle.wav",
-];
+const precacheResources = ["/"];
 
 self.addEventListener("install", (event) => {
   console.log("Service worker install event!");
