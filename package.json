@@ -11,7 +11,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist && echo 'cleaned!'",
-    "dist": "bun clean && bun build ./src/index.html --minify --splitting --outdir ./dist && bun build ./src/assets/serviceWorker.js --minify --outdir ./dist/ && echo 'built prod files!'",
+    "dist": "bun clean && bun build ./src/index.html --minify --splitting --outdir ./dist --entry-naming '/[name].[ext]' --chunk-naming '/[name].[ext]' --asset-naming '/[name].[ext]'  && bun build ./src/assets/serviceWorker.js --minify --outdir ./dist/ && echo 'built prod files!'",
     "prod": "bun dist && bun run ./dist/index.html",
     "dev": "bun run ./src/index.html"
   }

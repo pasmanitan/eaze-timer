@@ -1,5 +1,15 @@
-const cacheName = "eaze-timer-v1";
-const precacheResources = ["/"];
+const cacheName = "eaze-timer-v2";
+const precacheResources = [
+  "/",
+  "/index.html",
+  "/index.js",
+  "/index.css",
+  "/apple-touch-icon.png",
+  "/site.webmanifest",
+  "/favicon-16x16.png",
+  "/favicon-32x32.png",
+  "/jingle.wav",
+];
 
 self.addEventListener("install", (event) => {
   console.log("Service worker install event!");
