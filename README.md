@@ -1,5 +1,3 @@
 # Eaze Timer
 
-simple single file timer.
-
-my first js project.
+simple single file timer app. just javascript. my first project.
