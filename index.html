@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>eaze</title>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./favicon/site.webmanifest" />
+  </head>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      color: #fff;
+      background: #000;
+      margin: 0;
+      font-size: clamp(1.5rem, -1rem + 6.4vw, 2.5rem);
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      -webkit-text-size-adjust: 100%;
+      text-rendering: optimizeLegibility;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    html::-webkit-scrollbar {
+      display: none;
+    }
+    .container {
+      display: flex;
+      min-height: 100dvh;
+      align-items: center;
+      align-content: center;
+      justify-content: center;
+    }
+    #timer {
+      margin: 0 auto;
+      font-size: 3em;
+      width: 4em;
+      background-color: transparent;
+      color: white;
+      border: 0;
+      outline: none;
+    }
+    #timer_label {
+      cursor: pointer;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <form id="form" style="display: flex; flex-flow: column wrap">
+        <label
+          name="timer"
+          for="timer"
+          id="timer_label"
+          style="text-align: center; color: #8a8a8a; font-family: monospace"
+          onclick="window.open('https://pasmanitan.vercel.app', '_blank')"
+          onmouseover="this.textContent = 'made by paz'"
+          onmouseout="this.textContent = 'eaze timer'"
+          >eaze timer</label
+        >
+        <input
+          name="timer"
+          id="timer"
+          type="tel"
+          inputmode="numeric"
+          pattern="[0-9:]*"
+          placeholder="00:00:00"
+          maxlength="8"
+          autocomplete="off"
+          dir="rtl"
+        />
+      </form>
+    </div>
+    <script>
+      const form = document.getElementById("form");
+      const timer = document.querySelector("#timer");
+      const tlab = document.querySelector("#timer_label");
+      let si = null;
+      let ton = false;
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        startTimer();
+      });
+
+      timer.addEventListener("input", function () {
+        this.value = this.value.replace(/[^0-9:]/g, "");
+      });
+
+      timer.addEventListener("focus", (e) => {
+        tlab.textContent = "[f]ocus";
+      });
+      timer.addEventListener("focusout", (e) => {
+        tlab.textContent = "eaze timer";
+      });
+
+      function updateDisplay(h, m, s) {
+        timer.value =
+          `${h < 10 ? "0" + h : h}:` +
+          `${m < 10 ? "0" + m : m}:` +
+          `${s < 10 ? "0" + s : s}`;
+      }
+
+      function startTimer() {
+        let vals = form.elements["timer"].value.trim().split(":");
+        let hrs = 0;
+        let mins = 0;
+        let secs = 0;
+
+        if (vals.length === 3) {
+          [hrs, mins, secs] = vals.map((n) => Number(n) || 0);
+        } else if (vals.length === 2) {
+          [mins, secs] = vals.map((n) => Number(n) || 0);
+        } else if (vals.length === 1) {
+          secs = Number(vals[0]) || 0;
+        }
+
+        if (si === null && (hrs > 0 || mins > 0 || secs > 0)) {
+          ton = true;
+          tlab.textContent = "[t]oggle [r]eset";
+          si = setInterval(() => {
+            if (hrs === 0 && mins === 0 && secs === 0) {
+              resetTimer();
+              return;
+            }
+            if (secs === 0) {
+              if (mins > 0) {
+                mins--;
+                secs = 59;
+              } else if (hrs > 0) {
+                hrs--;
+                mins = 59;
+                secs = 59;
+              }
+            } else {
+              secs--;
+            }
+            updateDisplay(hrs, mins, secs);
+          }, 1000);
+        }
+      }
+
+      function stopTimer() {
+        clearInterval(si);
+        ton = false;
+        si = null;
+      }
+
+      function resetTimer() {
+        stopTimer();
+        timer.value = "";
+        tlab.textContent = "eaze timer";
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === " " || e.key === "t") {
+          e.preventDefault();
+          if (ton) {
+            stopTimer();
+          } else {
+            startTimer();
+          }
+        }
+        if (e.key === "r") {
+          resetTimer();
+        }
+
+        if (e.key === "f") {
+          e.preventDefault();
+          if (timer.matches(":focus") === true) {
+            timer.blur();
+          } else {
+            timer.focus();
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
