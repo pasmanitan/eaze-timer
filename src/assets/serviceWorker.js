@@ -29,22 +29,27 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   console.log("Service worker is activated");
 
-  // removes old caches
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return cacheNames.map((cache) => {
-        if (cache !== cacheName) {
-          console.log("Clearing old caches");
-          caches.delete(cache);
-        }
-      });
-    }),
-  );
+  // // removes old caches
+  // event.waitUntil(
+  //   caches.keys().then((cacheNames) => {
+  //     return cacheNames.map((cache) => {
+  //       if (cache !== cacheName) {
+  //         console.log("Clearing old caches");
+  //         caches.delete(cache);
+  //       }
+  //     });
+  //   }),
+  // );
 });
 
 self.addEventListener("fetch", (event) => {
-  console.log("Fetching via Service worker");
+  console.log("Fetch intercepted for:", event.request.url);
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request)),
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request);
+    }),
   );
 });
