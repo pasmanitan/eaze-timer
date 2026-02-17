@@ -1,4 +1,4 @@
-const cacheName = "eaze-timer-v12";
+const cacheName = "eaze-timer-v13";
 const cacheAssets = [
   "/",
   "/index.html",
