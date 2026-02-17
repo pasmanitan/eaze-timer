@@ -1,5 +1,6 @@
-const cacheName = "eaze-timer-v0.5";
-const cacheAssets = [
+const cacheName = "eaze-timer-v11";
+
+const precacheResources = [
   "/",
   "/index.html",
   "/index.js",
@@ -14,37 +15,40 @@ const cacheAssets = [
 ];
 
 self.addEventListener("install", (event) => {
-  console.log("Service worker is installed");
+  self.skipWaiting();
   event.waitUntil(
-    caches
-      .open(cacheName)
-      .then((cache) => {
-        console.log("Caching assets");
-        cache.addAll(cacheAssets);
-      })
-      .then(() => self.skipWaiting()),
+    caches.open(cacheName).then((cache) => cache.addAll(precacheResources)),
   );
 });
 
 self.addEventListener("activate", (event) => {
-  console.log("Service worker is activated");
-
-  // removes old caches
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return cacheNames.map((cache) => {
-        if (cache !== cacheName) {
-          console.log("Clearing old caches");
-          caches.delete(cache);
-        }
-      });
-    }),
+    Promise.all([
+      self.clients.claim(),
+      caches
+        .keys()
+        .then((names) =>
+          Promise.all(
+            names
+              .filter((name) => name !== cacheName)
+              .map((name) => caches.delete(name)),
+          ),
+        ),
+    ]),
   );
 });
 
 self.addEventListener("fetch", (event) => {
-  console.log("Fetching via Service worker");
+  if (event.request.method !== "GET") return;
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(caches.match("/index.html"));
+    return;
+  }
+
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request)),
+    caches.match(event.request).then((cached) => {
+      return cached || fetch(event.request);
+    }),
   );
 });
