@@ -1,4 +1,4 @@
-const cacheName = "eaze-timer-v0.1";
+const cacheName = "eaze-timer-v0.2";
 const precacheResources = [
   "/",
   "/index.html",
@@ -12,25 +12,9 @@ const precacheResources = [
 ];
 
 self.addEventListener("install", (event) => {
-  console.log("Service worker install event!");
+  self.skipWaiting(); // Activate immediately
   event.waitUntil(
     caches.open(cacheName).then((cache) => cache.addAll(precacheResources)),
-  );
-});
-
-self.addEventListener("activate", () => {
-  console.log("Service worker activate event!");
-});
-
-self.addEventListener("fetch", (event) => {
-  console.log("Fetch intercepted for:", event.request.url);
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request);
-    }),
   );
 });
 
@@ -38,12 +22,53 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) =>
+      .then((cacheNames) =>
         Promise.all(
-          keys
-            .filter((key) => key !== cacheName)
-            .map((key) => caches.delete(key)),
+          cacheNames.map((name) => {
+            if (name !== cacheName) {
+              return caches.delete(name); // Remove old caches
+            }
+          }),
         ),
-      ),
+      )
+      .then(() => self.clients.claim()), // Take control immediately
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+
+  // Only handle GET requests
+  if (request.method !== "GET") return;
+
+  // Network-first for HTML navigation requests
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          return caches.open(cacheName).then((cache) => {
+            cache.put(request, networkResponse.clone());
+            return networkResponse;
+          });
+        })
+        .catch(() => caches.match(request)),
+    );
+    return;
+  }
+
+  // Stale-while-revalidate for other assets
+  event.respondWith(
+    caches.match(request).then((cachedResponse) => {
+      const fetchPromise = fetch(request)
+        .then((networkResponse) => {
+          return caches.open(cacheName).then((cache) => {
+            cache.put(request, networkResponse.clone());
+            return networkResponse;
+          });
+        })
+        .catch(() => cachedResponse);
+
+      return cachedResponse || fetchPromise;
+    }),
   );
 });

@@ -17,6 +17,7 @@ const form = document.getElementById("form");
 const timer = document.querySelector("#timer");
 const timerLabel = document.querySelector("#timerLabel");
 const jingle = document.querySelector("#jingle");
+const resetElement = document.querySelector("#resetElement");
 
 // STATE HANDLERS
 
@@ -54,6 +55,7 @@ function startTimer() {
     timerOn = true;
     labelState = "[t]oggle";
     timer.style.textDecoration = "none";
+    resetElement.style.display = "block";
     timer.blur();
     handleInterval = setInterval(() => {
       totalSeconds--;
@@ -87,6 +89,7 @@ function resetTimer() {
   labelState = "eaze timer";
   document.title = "eaze";
   timer.style.textDecoration = "none";
+  resetElement.style.display = "none";
 }
 
 function toggleTimer() {
@@ -132,10 +135,14 @@ document.addEventListener("keydown", (e) => {
 
 timer.addEventListener("focus", () => {
   timerLabel.textContent = "[f]ocus";
+  resetElement.style.display = "none";
 });
 
 timer.addEventListener("focusout", () => {
   timerLabel.textContent = `${labelState}`;
+  if (labelState === "[t]oggle") {
+    resetElement.style.display = "block";
+  }
 });
 
 timerLabel.addEventListener("mouseenter", () => {
@@ -156,4 +163,9 @@ timerLabel.addEventListener("click", () => {
   if (labelState === "[t]oggle") {
     toggleTimer();
   }
+});
+
+resetElement.addEventListener("click", () => {
+  timer.blur();
+  resetTimer();
 });

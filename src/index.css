@@ -1,3 +1,10 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+
 html {
   color: #fff;
   background: #000;
@@ -5,13 +12,8 @@ html {
   font-size: clamp(1.5rem, -1rem + 6.4vw, 2.5rem);
   scrollbar-width: none;
   -ms-overflow-style: none;
-
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  box-sizing: border-box;
 }
 
 html::-webkit-scrollbar {
@@ -36,7 +38,8 @@ html::-webkit-scrollbar {
   outline: none;
 }
 
-#timerLabel {
+#timerLabel,
+#resetElement {
   cursor: pointer;
   text-align: center;
   color: #8a8a8a;
@@ -44,11 +47,17 @@ html::-webkit-scrollbar {
 }
 
 #jingle,
-#hidden_label {
+#hidden_label,
+#resetElement {
   display: none;
 }
 
 #form {
   display: flex;
   flex-flow: column wrap;
+}
+
+.labelContainer {
+  display: flex;
+  justify-content: space-evenly;
 }
