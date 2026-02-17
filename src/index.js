@@ -20,8 +20,6 @@ const registerServiceWorker = async () => {
   }
 };
 
-registerServiceWorker();
-
 // ELEMENTS
 
 const form = document.getElementById("form");
@@ -180,3 +178,5 @@ resetElement.addEventListener("click", () => {
   timer.blur();
   resetTimer();
 });
+
+registerServiceWorker();
