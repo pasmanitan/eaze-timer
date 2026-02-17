@@ -29,8 +29,8 @@ let labelState = "eaze timer";
 
 function updateDisplay(h, m, s) {
   timer.value =
-    `${h < 10 ? "0" + h : h}:` +
-    `${m < 10 ? "0" + m : m}:` +
+    `${h > 0 ? `${h < 10 ? "0" + h : h}:` : ""}` +
+    `${m > 0 ? `${m < 10 ? "0" + m : m}:` : ""}` +
     `${s < 10 ? "0" + s : s}`;
   document.title = timer.value;
 }
@@ -77,6 +77,7 @@ function startTimer() {
 
 function stopTimer() {
   clearInterval(handleInterval);
+  timer.blur();
   timerOn = false;
   handleInterval = null;
   timer.style.textDecoration = "line-through";
@@ -136,10 +137,12 @@ document.addEventListener("keydown", (e) => {
 timer.addEventListener("focus", () => {
   timerLabel.textContent = "[f]ocus";
   resetElement.style.display = "none";
+  timer.placeholder = "";
 });
 
 timer.addEventListener("focusout", () => {
   timerLabel.textContent = `${labelState}`;
+  timer.placeholder = "00:00:00";
   if (labelState === "[t]oggle") {
     resetElement.style.display = "block";
   }

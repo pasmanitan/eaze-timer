@@ -36,6 +36,7 @@ html::-webkit-scrollbar {
   color: white;
   border: 0;
   outline: none;
+  text-align: center;
 }
 
 #timerLabel,
