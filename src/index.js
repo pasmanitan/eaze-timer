@@ -1,17 +1,14 @@
-// register service worker for offline support
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    initServiceWorker();
-  });
-}
+// REGISTER SERVICE WORKER
 
-function initServiceWorker() {
-  navigator.serviceWorker
-    .register("sw.js")
-    .then(() => console.log("Service worker is registered successfully"))
-    .catch((error) =>
-      console.error(`failed to register service worker, error: ${error}`),
-    );
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      let reg = await navigator.serviceWorker.register("/serviceWorker.js");
+      console.log("Service Worker Registration Success", reg);
+    } catch (err) {
+      console.log("Service Worker Registration Failure", err);
+    }
+  });
 }
 
 // ELEMENTS
