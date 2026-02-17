@@ -18,7 +18,6 @@ const APP_STATIC_RESOURCES = [
   "./apple-touch-icon.png",
   "./favicon-16x16.png",
   "./favicon-32x32.png",
-  "./serviceWorker.js",
 ];
 
 self.addEventListener("install", (event) => {
