@@ -12,6 +12,7 @@ const cacheAssets = [
   "/android-chrome-512x512.png",
   "/jingle.wav",
   "/serviceWorker.js",
+  "/favicon.ico",
 ];
 
 self.addEventListener("install", (event) => {
@@ -30,17 +31,17 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   console.log("Service worker is activated");
 
-  // // removes old caches
-  // event.waitUntil(
-  //   caches.keys().then((cacheNames) => {
-  //     return cacheNames.map((cache) => {
-  //       if (cache !== cacheName) {
-  //         console.log("Clearing old caches");
-  //         caches.delete(cache);
-  //       }
-  //     });
-  //   }),
-  // );
+  // removes old caches
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return cacheNames.map((cache) => {
+        if (cache !== cacheName) {
+          console.log("Clearing old caches");
+          caches.delete(cache);
+        }
+      });
+    }),
+  );
 });
 
 self.addEventListener("fetch", (event) => {
