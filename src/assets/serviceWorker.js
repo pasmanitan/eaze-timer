@@ -1,5 +1,5 @@
-const cacheName = "eaze-timer-v0.2";
-const precacheResources = [
+const cacheName = "eaze-timer-v0.5";
+const cacheAssets = [
   "/",
   "/index.html",
   "/index.js",
@@ -8,67 +8,43 @@ const precacheResources = [
   "/site.webmanifest",
   "/favicon-16x16.png",
   "/favicon-32x32.png",
+  "/android-chrome-192x192.png",
+  "/android-chrome-512x512.png",
   "/jingle.wav",
 ];
 
 self.addEventListener("install", (event) => {
-  self.skipWaiting(); // Activate immediately
+  console.log("Service worker is installed");
   event.waitUntil(
-    caches.open(cacheName).then((cache) => cache.addAll(precacheResources)),
+    caches
+      .open(cacheName)
+      .then((cache) => {
+        console.log("Caching assets");
+        cache.addAll(cacheAssets);
+      })
+      .then(() => self.skipWaiting()),
   );
 });
 
 self.addEventListener("activate", (event) => {
+  console.log("Service worker is activated");
+
+  // removes old caches
   event.waitUntil(
-    caches
-      .keys()
-      .then((cacheNames) =>
-        Promise.all(
-          cacheNames.map((name) => {
-            if (name !== cacheName) {
-              return caches.delete(name); // Remove old caches
-            }
-          }),
-        ),
-      )
-      .then(() => self.clients.claim()), // Take control immediately
+    caches.keys().then((cacheNames) => {
+      return cacheNames.map((cache) => {
+        if (cache !== cacheName) {
+          console.log("Clearing old caches");
+          caches.delete(cache);
+        }
+      });
+    }),
   );
 });
 
 self.addEventListener("fetch", (event) => {
-  const request = event.request;
-
-  // Only handle GET requests
-  if (request.method !== "GET") return;
-
-  // Network-first for HTML navigation requests
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then((networkResponse) => {
-          return caches.open(cacheName).then((cache) => {
-            cache.put(request, networkResponse.clone());
-            return networkResponse;
-          });
-        })
-        .catch(() => caches.match(request)),
-    );
-    return;
-  }
-
-  // Stale-while-revalidate for other assets
+  console.log("Fetching via Service worker");
   event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      const fetchPromise = fetch(request)
-        .then((networkResponse) => {
-          return caches.open(cacheName).then((cache) => {
-            cache.put(request, networkResponse.clone());
-            return networkResponse;
-          });
-        })
-        .catch(() => cachedResponse);
-
-      return cachedResponse || fetchPromise;
-    }),
+    fetch(event.request).catch(() => caches.match(event.request)),
   );
 });
