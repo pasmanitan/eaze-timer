@@ -1,6 +1,7 @@
 const cacheName = "eaze-timer-v1";
 const cacheAssets = [
-  "/index.html",
+  "/",
+  "/favicon.ico",
   "/index.js",
   "/index.css",
   "/apple-touch-icon.png",
@@ -11,7 +12,6 @@ const cacheAssets = [
   "/android-chrome-512x512.png",
   "/jingle.wav",
   "/serviceWorker.js",
-  "/favicon.ico",
 ];
 
 self.addEventListener("install", (event) => {
