@@ -1,4 +1,4 @@
-const cacheName = "eaze-timer-v13";
+const cacheName = "eaze-timer-v1";
 const cacheAssets = [
   "/",
   "/index.html",
@@ -31,27 +31,58 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   console.log("Service worker is activated");
 
-  // // removes old caches
-  // event.waitUntil(
-  //   caches.keys().then((cacheNames) => {
-  //     return cacheNames.map((cache) => {
-  //       if (cache !== cacheName) {
-  //         console.log("Clearing old caches");
-  //         caches.delete(cache);
-  //       }
-  //     });
-  //   }),
-  // );
+  // removes old caches
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return cacheNames.map((cache) => {
+        if (cache !== cacheName) {
+          console.log("Clearing old caches");
+          caches.delete(cache);
+        }
+      });
+    }),
+  );
 });
 
+const cacheFirst = async ({ request, fallbackUrl }) => {
+  // First try to get the resource from the cache.
+  const responseFromCache = await caches.match(request);
+  if (responseFromCache) {
+    return responseFromCache;
+  }
+
+  // If the response was not found in the cache,
+  // try to get the resource from the network.
+  try {
+    const responseFromNetwork = await fetch(request);
+    // If the network request succeeded, clone the response:
+    // - put one copy in the cache, for the next time
+    // - return the original to the app
+    // Cloning is needed because a response can only be consumed once.
+    putInCache(request, responseFromNetwork.clone());
+    return responseFromNetwork;
+  } catch (error) {
+    // If the network request failed,
+    // get the fallback response from the cache.
+    const fallbackResponse = await caches.match(fallbackUrl);
+    if (fallbackResponse) {
+      return fallbackResponse;
+    }
+    // When even the fallback response is not available,
+    // there is nothing we can do, but we must always
+    // return a Response object.
+    return new Response("Network error happened", {
+      status: 408,
+      headers: { "Content-Type": "text/plain" },
+    });
+  }
+};
+
 self.addEventListener("fetch", (event) => {
-  console.log("Fetch intercepted for:", event.request.url);
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request);
+    cacheFirst({
+      request: event.request,
+      fallbackUrl: "/",
     }),
   );
 });
