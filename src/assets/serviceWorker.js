@@ -1,6 +1,5 @@
-const CACHE_NAME = "eaze-timer-v11";
-
-const precacheResources = [
+const cacheName = "eaze-timer-v12";
+const cacheAssets = [
   "/",
   "/index.html",
   "/index.js",
@@ -12,47 +11,40 @@ const precacheResources = [
   "/android-chrome-192x192.png",
   "/android-chrome-512x512.png",
   "/jingle.wav",
-  "/favicon.ico",
 ];
 
-// INSTALL
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(precacheResources);
-    }),
-  );
-  self.skipWaiting();
-});
-
-// ACTIVATE
-self.addEventListener("activate", (event) => {
+  console.log("Service worker is installed");
   event.waitUntil(
     caches
-      .keys()
-      .then((keys) =>
-        Promise.all(
-          keys
-            .filter((key) => key !== CACHE_NAME)
-            .map((key) => caches.delete(key)),
-        ),
-      ),
+      .open(cacheName)
+      .then((cache) => {
+        console.log("Caching assets");
+        cache.addAll(cacheAssets);
+      })
+      .then(() => self.skipWaiting()),
   );
-  self.clients.claim();
 });
 
-// FETCH (Cache First)
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
+self.addEventListener("activate", (event) => {
+  console.log("Service worker is activated");
 
-      return fetch(event.request).then((response) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, response.clone());
-          return response;
-        });
+  // removes old caches
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return cacheNames.map((cache) => {
+        if (cache !== cacheName) {
+          console.log("Clearing old caches");
+          caches.delete(cache);
+        }
       });
     }),
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  console.log("Fetching via Service worker");
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request)),
   );
 });

@@ -1,24 +1,15 @@
-const registerServiceWorker = async () => {
-  if ("serviceWorker" in navigator) {
+// REGISTER SERVICE WORKER
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register(
-        "/serviceWorker.js",
-        {
-          scope: "/",
-        },
-      );
-      if (registration.installing) {
-        console.log("Service worker installing");
-      } else if (registration.waiting) {
-        console.log("Service worker installed");
-      } else if (registration.active) {
-        console.log("Service worker active");
-      }
-    } catch (error) {
-      console.error(`Registration failed with ${error}`);
+      let reg = await navigator.serviceWorker.register("/serviceWorker.js");
+      console.log("Service Worker Registration Success", reg);
+    } catch (err) {
+      console.log("Service Worker Registration Failure", err);
     }
-  }
-};
+  });
+}
 
 // ELEMENTS
 
@@ -178,5 +169,3 @@ resetElement.addEventListener("click", () => {
   timer.blur();
   resetTimer();
 });
-
-registerServiceWorker();
