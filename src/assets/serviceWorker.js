@@ -2,6 +2,7 @@ const cacheName = "eaze-timer-v11";
 
 const precacheResources = [
   "/",
+  "/index.html",
   "/index.js",
   "/index.css",
   "/apple-touch-icon.png",
@@ -11,6 +12,7 @@ const precacheResources = [
   "/android-chrome-192x192.png",
   "/android-chrome-512x512.png",
   "/jingle.wav",
+  "/favicon.ico",
 ];
 
 // Install: Pre-cache app shell
