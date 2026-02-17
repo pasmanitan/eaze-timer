@@ -1,4 +1,4 @@
-const cacheName = "eaze-timer-v11";
+const CACHE_NAME = "eaze-timer-v11";
 
 const precacheResources = [
   "/",
@@ -15,15 +15,17 @@ const precacheResources = [
   "/favicon.ico",
 ];
 
-// Install: Pre-cache app shell
+// INSTALL
 self.addEventListener("install", (event) => {
-  self.skipWaiting();
   event.waitUntil(
-    caches.open(cacheName).then((cache) => cache.addAll(precacheResources)),
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(precacheResources);
+    }),
   );
+  self.skipWaiting();
 });
 
-// Activate: Clean old caches
+// ACTIVATE
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
@@ -31,7 +33,7 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key !== cacheName)
+            .filter((key) => key !== CACHE_NAME)
             .map((key) => caches.delete(key)),
         ),
       ),
@@ -39,28 +41,18 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch: Cache-first strategy
+// FETCH (Cache First)
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
-
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse;
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
 
-      return fetch(event.request)
-        .then((networkResponse) => {
-          // Optional: cache new GET requests dynamically
-          return caches.open(cacheName).then((cache) => {
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
-          });
-        })
-        .catch(() => {
-          // SPA fallback
-          if (event.request.mode === "navigate") {
-            return caches.match("/index.html");
-          }
+      return fetch(event.request).then((response) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, response.clone());
+          return response;
         });
+      });
     }),
   );
 });
