@@ -1,6 +1,5 @@
 const cacheName = "eaze-timer-v1";
 const cacheAssets = [
-  "/",
   "/index.html",
   "/index.js",
   "/index.css",
@@ -82,7 +81,7 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     cacheFirst({
       request: event.request,
-      fallbackUrl: "/",
+      fallbackUrl: "/index.html",
     }),
   );
 });
