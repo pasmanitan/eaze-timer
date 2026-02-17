@@ -1,5 +1,5 @@
 // The version of the cache.
-const VERSION = "v1.5";
+const VERSION = "v1";
 
 // The name of the cache
 const CACHE_NAME = `eaze-${VERSION}`;
@@ -18,6 +18,7 @@ const APP_STATIC_RESOURCES = [
   "/apple-touch-icon.png",
   "/favicon-16x16.png",
   "/favicon-32x32.png",
+  "/serviceWorker.js",
 ];
 
 // On install, cache the static resources
