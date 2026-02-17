@@ -1,7 +1,7 @@
 const cacheName = "eaze-timer-v11";
 
 const precacheResources = [
-  "/index.html",
+  "/",
   "/index.js",
   "/index.css",
   "/apple-touch-icon.png",
