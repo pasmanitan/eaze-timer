@@ -1,5 +1,5 @@
 // The version of the cache.
-const VERSION = "v1";
+const VERSION = "v30";
 
 // The name of the cache
 const CACHE_NAME = `eaze-${VERSION}`;
@@ -7,27 +7,30 @@ const CACHE_NAME = `eaze-${VERSION}`;
 // The static resources that the app needs to function.
 const APP_STATIC_RESOURCES = [
   "/",
-  "/index.html",
-  "/index.js",
-  "/index.css",
-  "/favicon.ico",
-  "/site.webmanifest",
-  "/jingle.wav",
-  "/android-chrome-192x192.png",
-  "/android-chrome-512x512.png",
-  "/apple-touch-icon.png",
-  "/favicon-16x16.png",
-  "/favicon-32x32.png",
-  "/serviceWorker.js",
+  "index.html",
+  "index.js",
+  "index.css",
+  "favicon.ico",
+  "site.webmanifest",
+  "jingle.wav",
+  "android-chrome-192x192.png",
+  "android-chrome-512x512.png",
+  "apple-touch-icon.png",
+  "favicon-16x16.png",
+  "favicon-32x32.png",
+  "serviceWorker.js",
 ];
 
-// On install, cache the static resources
 self.addEventListener("install", (event) => {
+  console.log("Service worker is installed");
   event.waitUntil(
-    (async () => {
-      const cache = await caches.open(CACHE_NAME);
-      cache.addAll(APP_STATIC_RESOURCES);
-    })(),
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log("Caching assets");
+        cache.addAll(APP_STATIC_RESOURCES);
+      })
+      .then(() => self.skipWaiting()),
   );
 });
 
@@ -52,13 +55,10 @@ self.addEventListener("activate", (event) => {
 // On fetch, intercept server requests
 // and respond with cached responses instead of going to network
 self.addEventListener("fetch", (event) => {
-  // As a single page app, direct app to always go to cached home page.
   if (event.request.mode === "navigate") {
     event.respondWith(caches.match("/"));
     return;
   }
-
-  // For all other requests, go to the cache first, and then the network.
   event.respondWith(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
