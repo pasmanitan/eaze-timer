@@ -1,7 +1,6 @@
 const cacheName = "eaze-timer-v11";
 
 const precacheResources = [
-  "/",
   "/index.html",
   "/index.js",
   "/index.css",
@@ -15,12 +14,16 @@ const precacheResources = [
 ];
 
 self.addEventListener("install", (event) => {
-  self.skipWaiting();
   event.waitUntil(
-    caches.open(cacheName).then((cache) => cache.addAll(precacheResources)),
+    caches
+      .open(cacheName)
+      .then((cache) => cache.addAll(precacheResources))
+      .catch((err) => {
+        console.error("Cache install failed:", err);
+        throw err;
+      }),
   );
 });
-
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     Promise.all([
