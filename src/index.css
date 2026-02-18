@@ -60,5 +60,6 @@ html::-webkit-scrollbar {
 
 .labelContainer {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
+  column-gap: 0.4in;
 }
