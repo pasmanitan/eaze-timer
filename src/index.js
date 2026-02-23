@@ -151,11 +151,15 @@ timer.addEventListener("focusout", () => {
 timerLabel.addEventListener("mouseenter", () => {
   if (labelState === "eaze timer") {
     timerLabel.textContent = "made by paz";
+    timerLabel.classList.add("made");
+    timerLabel.style.color = "white";
   }
 });
 
 timerLabel.addEventListener("mouseleave", () => {
   timerLabel.textContent = `${labelState}`;
+  timerLabel.classList.remove("made");
+  timerLabel.style.color = "#8a8a8a";
 });
 
 timerLabel.addEventListener("click", () => {
