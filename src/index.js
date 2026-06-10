@@ -40,6 +40,7 @@ function startTimer() {
   let hrs = 0;
   let mins = 0;
   let secs = 0;
+  jingle.loop = true;
 
   if (values.length === 3) {
     [hrs, mins, secs] = values.map((n) => Number(n) || 0);
@@ -63,8 +64,17 @@ function startTimer() {
       if (totalSeconds <= 0) {
         resetTimer();
         jingle.play();
+        if (!document.hidden) {
+          jingle.loop = false;
+        }
         return;
       }
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+          jingle.loop = false;
+        }
+      });
 
       hrs = Math.floor(totalSeconds / 3600);
       mins = Math.floor((totalSeconds % 3600) / 60);
